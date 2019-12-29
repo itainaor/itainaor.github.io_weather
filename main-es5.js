@@ -119,7 +119,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<div class=\"homepage-wrapper\">\n  <div class=\"search-wrapper row\">\n    <div class=\"col-lg-6\">\n      <ng-select [items]=\"reducer.cities\"\n                 bindLabel=\"name\"\n                 placeholder=\"Select city\"\n                 [(ngModel)]=\"reducer.autocompleteSearch\"\n                 dropdownPosition=\"bottom\"\n                 (search)=\"doSearch($event)\"\n                 (close)=\"doSelect()\"\n                 (clear)=\"emptyList()\">\n      </ng-select>\n    </div>\n  </div>\n  <div class=\"row center\">\n    <div class=\"current-weather-wrapper col-lg-10\" *ngIf=\"reducer.autocompleteSearch && reducer.currentCondition.text\">\n      <div class=\"card\">\n        <div class=\"card-header text-white bg-info\">\n          {{reducer.autocompleteSearch.name}}\n          <span (click)=\"favoriteHandle()\">\n            <i class=\"fa fa-heart heart-icon\" [ngClass]=\"{'is-favorite': reducer.autocompleteSearch.isFavorite}\"></i>\n          </span>\n        </div>\n        <div class=\"card-body\">\n          <p class=\"card-text\">{{reducer.currentCondition.text}}</p>\n          <h5 class=\"card-title\">\n            <img *ngIf=\"reducer.currentCondition.icon\" class=\"condition-image\" src=\"../../../assets/images/{{reducer.currentCondition.icon  + '-s.png'}}\">\n            <span class=\"condition-text\">{{reducer.currentCondition.value | temperature: reducer.currentCondition.unit}}</span>\n          </h5>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"row center\" *ngIf=\"reducer.autocompleteSearch && reducer.forecast\">\n    <div class=\"current-weather-wrapper forecast-card-wrapper col-lg-2\" *ngFor=\"let day of reducer.forecast; let i = index\">\n      <div class=\"card\">\n        <div class=\"card-body my-card-body\">\n            <p class=\"card-text\">{{day.date | date: 'EEEE'}}</p>\n          <img *ngIf=\"day.icon\" src=\"../../../assets/images/{{day.icon  + '-s.png'}}\">\n          <p class=\"card-text\">{{day.text}}</p>\n          <h5 class=\"card-title\">\n            <div class=\"condition-text\">{{day.value | temperature: day.unit}}</div>\n          </h5>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n";
+    __webpack_exports__["default"] = "<div class=\"homepage-wrapper\">\n  <div class=\"search-wrapper row\">\n    <div class=\"col-lg-6\">\n      <ng-select [items]=\"reducer.cities\"\n                 bindLabel=\"name\"\n                 placeholder=\"Select city\"\n                 [(ngModel)]=\"reducer.autocompleteSearch\"\n                 dropdownPosition=\"bottom\"\n                 (search)=\"doSearch($event)\"\n                 (close)=\"doSelect()\"\n                 (clear)=\"emptyList()\">\n      </ng-select>\n    </div>\n  </div>\n  <div class=\"row center\">\n    <div class=\"current-weather-wrapper col-lg-10\" *ngIf=\"reducer.autocompleteSearch && reducer.currentCondition\">\n      <div class=\"card\">\n        <div class=\"card-header text-white bg-info\">\n          {{reducer.autocompleteSearch.name}}\n          <span (click)=\"favoriteHandle()\">\n            <i class=\"fa fa-heart heart-icon\" [ngClass]=\"{'is-favorite': reducer.autocompleteSearch.isFavorite}\"></i>\n          </span>\n        </div>\n        <div class=\"card-body\">\n          <p class=\"card-text\">{{reducer.currentCondition.text}}</p>\n          <h5 class=\"card-title\">\n            <img *ngIf=\"reducer.currentCondition.icon\" class=\"condition-image\" src=\"../../../assets/images/{{reducer.currentCondition.icon  + '-s.png'}}\">\n            <span class=\"condition-text\">{{reducer.currentCondition.value | temperature: reducer.currentCondition.unit}}</span>\n          </h5>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"row center\" *ngIf=\"reducer.autocompleteSearch && reducer.forecast\">\n    <div class=\"current-weather-wrapper forecast-card-wrapper col-lg-2\" *ngFor=\"let day of reducer.forecast; let i = index\">\n      <div class=\"card\">\n        <div class=\"card-body my-card-body\">\n            <p class=\"card-text\">{{day.date | date: 'EEEE'}}</p>\n          <img *ngIf=\"day.icon\" src=\"../../../assets/images/{{day.icon  + '-s.png'}}\">\n          <p class=\"card-text\">{{day.text}}</p>\n          <h5 class=\"card-title\">\n            <div class=\"condition-text\">{{day.value | temperature: day.unit}}</div>\n          </h5>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n";
     /***/
   },
 
@@ -1414,7 +1414,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.user.getAllStates().subscribe(function (state) {
             _this3.reducer = state;
           }, function () {});
-          this.selectedCity = Object.assign({}, this.reducer.autocompleteSearch);
           this.doSelect();
         }
       }, {
@@ -1425,6 +1424,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var cities = [];
 
           if (!e.term) {
+            // clear list if search field is empty
             this.store.dispatch({
               type: _shared_reducers_appActions__WEBPACK_IMPORTED_MODULE_5__["ACTION_UPDATE_CITIES"],
               payload: cities
@@ -1507,6 +1507,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "emptyList",
         value: function emptyList() {
+          this.store.dispatch({
+            type: _shared_reducers_appActions__WEBPACK_IMPORTED_MODULE_5__["ACTION_AUTOCOMPLETE_SEARCH"],
+            payload: null
+          });
+          this.store.dispatch({
+            type: _shared_reducers_appActions__WEBPACK_IMPORTED_MODULE_5__["ACTION_CURRENT_CONDITION"],
+            payload: null
+          });
           this.store.dispatch({
             type: _shared_reducers_appActions__WEBPACK_IMPORTED_MODULE_5__["ACTION_UPDATE_CITIES"],
             payload: []
@@ -1741,7 +1749,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         name: 'Tel Aviv',
         isFavorite: false
       },
-      currentCondition: [],
+      currentCondition: null,
       forecast: [],
       cities: [],
       favorites: [],
